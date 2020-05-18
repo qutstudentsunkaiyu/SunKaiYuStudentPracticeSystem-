@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gengyun.budgetreal.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.gengyun.budgetreal.entity.User">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="passwd" property="passwd" />
+        <result column="real_name" property="realName" />
+        <result column="phone" property="phone" />
+        <result column="email" property="email" />
+        <result column="school" property="school" />
+        <result column="age" property="age" />
+        <result column="profession" property="profession" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <resultMap id="userRole" type="com.gengyun.budgetreal.model.vo.UserRoleVo">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="user_id" property="userId" />
+        <result column="role_id" property="roleId" />
+        <result column="role_code" property="roleCode" />
+    </resultMap>
+
+    <resultMap id="userVo" type="com.gengyun.budgetreal.model.vo.UserVo">
+        <id column="id" property="id" />
+        <result column="user_name" property="userName" />
+        <result column="real_name" property="realName" />
+        <result column="iphone" property="iphone" />
+        <result column="email" property="email" />
+        <result column="school" property="school" />
+        <result column="profession" property="profession" />
+        <result column="role" property="role" />
+    </resultMap>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, passwd, real_name, phone, email, create_time, update_time
+    </sql>
+
+    <select id="getUserRole" resultMap="userRole" >
+       select u.name as name ,u.id as user_id ,r.id as role_id ,r.code as role_code
+       from user as u
+       left join user_role on u.id= user_role.user_id
+       left join role as r on user_role.role_id=r.id
+       where u.id=#{id}
+
+    </select>
+
+    <select id="getUser" resultMap="userVo" parameterType="UserSearchVO">
+       select u.id as id, u.name as user_name,u.real_name as real_name,
+       u.phone as iphone, u.email as email ,u.school as school ,
+       u.profession as profession,role.name as role
+       from user as u
+       left join user_role on user_role.user_id=u.id
+       left join role on role.id=user_role.role_id
+       <where>
+           <if test="users.name!=null and users.name!='' ">and u.name  like "%"#{users.name}"%" </if>
+           <if test="users.realName!=null and users.realName!='' ">and  u.real_name  like "%"#{users.realName}"%" </if>
+           <if test="users.school!=null and users.school!='' ">and  u.school  like "%"#{users.school}"%" </if>
+           <if test="users.profession!=null and users.profession!='' "> and u.profession  like "%"#{users.profession}"%" </if>
+           <if test="users.roleName!=null and users.roleName!='' "> and role.name  like "%"#{users.roleName}"%" </if>
+
+       </where>
+        order by u.id asc
+    </select>
+
+</mapper>

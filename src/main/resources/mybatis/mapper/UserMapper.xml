@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exercise.budgetreal.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.exercise.budgetreal.entity.User">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="password" property="password" />
+        <result column="tname" property="tname" />
+        <result column="telephone" property="telephone" />
+        <result column="email" property="email" />
+        <result column="school" property="school" />
+        <result column="age" property="age" />
+        <result column="major" property="major" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <resultMap id="userRole" type="com.exercise.budgetreal.model.vo.UserRoleVo">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="Uid" property="Uid" />
+        <result column="Rid" property="Rid" />
+        <result column="role_code" property="roleCode" />
+    </resultMap>
+
+    <resultMap id="userVo" type="com.exercise.budgetreal.model.vo.UserVo">
+        <id column="id" property="id" />
+        <result column="user_name" property="userName" />
+        <result column="tname" property="tname" />
+        <result column="telephone" property="telephone" />
+        <result column="email" property="email" />
+        <result column="school" property="school" />
+        <result column="major" property="major" />
+        <result column="role" property="role" />
+    </resultMap>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, password, tname, telephone, email, create_time, update_time
+    </sql>
+
+    <select id="getUserRole" resultMap="userRole" >
+       select u.name as name ,u.id as user_id ,r.id as role_id ,r.code as role_code
+       from user as u
+       left join user_role on u.id= user_role.Uid
+       left join role as r on user_role.Rid=r.id
+       where u.id=#{id}
+
+    </select>
+
+    <select id="getUser" resultMap="userVo" parameterType="com.exercise.budgetreal.model.vo.UserSearchVO">
+       select u.id as id, u.name as user_name,u.tname as tname,
+       u.telephone as telephone, u.email as email ,u.school as school ,
+       u.major as major,role.name as role
+       from user as u
+       left join user_role on user_role.Uid=u.id
+       left join role on role.id=user_role.Rid
+       <where>
+           <if test="users.name!=null and users.name!='' ">and u.name  like "%"#{users.name}"%" </if>
+           <if test="users.tname!=null and users.tname!='' ">and  u.tname  like "%"#{users.tname}"%" </if>
+           <if test="users.school!=null and users.school!='' ">and  u.school  like "%"#{users.school}"%" </if>
+           <if test="users.major!=null and users.major!='' "> and u.major  like "%"#{users.major}"%" </if>
+           <if test="users.roleName!=null and users.roleName!='' "> and role.name  like "%"#{users.roleName}"%" </if>
+
+       </where>
+        order by u.id asc
+    </select>
+
+</mapper>
