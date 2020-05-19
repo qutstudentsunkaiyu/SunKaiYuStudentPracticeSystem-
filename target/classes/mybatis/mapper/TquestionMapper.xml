@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exercise.budgetreal.mapper.TquestionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.exercise.budgetreal.entity.Tquestion">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="user_id" property="userId" />
+        <result column="course_id" property="courseId" />
+        <result column="test_number" property="testNumber" />
+        <result column="chooseNu" property="chooseNu" />
+        <result column="writeNu" property="writeNu" />
+        <result column="total_time" property="totalTime" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <resultMap id="tQuestionVo" type="com.exercise.budgetreal.model.vo.TQuestionVO">
+        <result column="id" property="id" />
+        <result column="tquestion_name" property="tquestionName" />
+        <result column="user_name" property="userName" />
+        <result column="chooseNu" property="chooseNu" />
+        <result column="writeNu" property="writeNu" />
+        <result column="exam_num" property="examNum" />
+        <result column="subject_name" property="subjectName" />
+        <result column="course_id" property="courseId" />
+        <result column="total_time" property="totalTime" />
+        <result column="create_time" property="createTime" />
+
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, user_id, test_number, total_time,create_time, update_time
+    </sql>
+
+    <select id="getTestByTitle" resultMap="tQuestionVo">
+        select tquestion.id as id ,tquestion.name as tquestion_name, u.tname as user_name,
+        tquestion.chooseNu as chooseNu,tquestion.writeNu as writeNu,tquestion.total_time as total_time,
+        tquestion.test_number as exam_num,s.id as course_id , s.course as subject_name,tquestion.create_time as create_time
+        from tquestion
+        left join user  as u  on u.id=tquestion.user_id
+        left join course  as s  on s.id=tquestion.course_id
+        <where >
+            <if test="userId!= 0">and tquestion.user_id  = #{userId}</if>
+            <if test="testName!='aa'">and tquestion.name  like "%"#{testName}"%" </if>
+            <if test="userName!='aa'"> and u.tname like  "%"#{userName}"%" </if>
+        </where>
+        order by tquestion.id
+    </select>
+
+</mapper>
