@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exercise.budgetreal.mapper.ExamUserAnswerMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.exercise.budgetreal.entity.ExamUserAnswer">
+        <id column="id" property="id" />
+        <result column="tquestion_id" property="tquestionId" />
+        <result column="test_id" property="testId" />
+        <result column="test_type" property="testType" />
+        <result column="question_write" property="questionWrite" />
+        <result column="question_choose" property="questionChoose" />
+        <result column="right_answer" property="rightAnswer" />
+        <result column="score" property="score" />
+    </resultMap>
+
+
+
+
+    <resultMap id="examUserAnswerVo" type="com.exercise.budgetreal.model.vo.ExamUserAnswerVo">
+         <id column="id" property="id" />
+        <result column="tquestion_id" property="tquestionId" />
+        <result column="test_id" property="testId" />
+        <result column="test_type" property="testType" />
+        <result column="question_write" property="questionWrite" />
+        <result column="question_choose" property="questionChoose" />
+        <result column="right_answer" property="rightAnswer" />
+        <result column="score" property="score" />
+
+        <result column="title" property="title" />
+        <result column="choose_a" property="chooseA" />
+        <result column="choose_b" property="chooseB" />
+        <result column="choose_c" property="chooseC" />
+        <result column="choose_d" property="chooseD" />
+    </resultMap>
+
+    <resultMap id="examUserAnswerList" type="com.exercise.budgetreal.model.vo.ExamResultPreview">
+        <result column="user_answer_id" property="userAnswerId" />
+        <result column="title" property="title" />
+
+        <result column="user_answer" property="userAnswer" />
+        <result column="total_score" property="totalScore" />
+        <result column="userScore" property="userScore" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, tquestion_id, test_id, test_type, question_write, question_choose, right_answer, score
+    </sql>
+
+     <select id="getSelectList" resultMap="examUserAnswerVo">
+
+         select answer.*,questionchoose.title as title,
+         questionchoose.choose_a as chooseA,questionchoose.choose_b as chooseB,
+         questionchoose.choose_c as chooseC,
+         questionchoose.choose_d as chooseD
+         from answer
+         left join questionchoose on questionchoose.id=answer.tquestion_id
+         <where>
+             ${ew.sqlSegment}
+         </where>
+     </select>
+
+    <select id="getWriteList" resultMap="examUserAnswerVo">
+        select answer.*,questionwrite.title as title
+
+        from answer
+        left join questionwrite on questionwrite.id=answer.tquestion_id
+
+            <where>
+                ${ew.sqlSegment}
+            </where>
+    </select>
+<update id="sunScore" >
+    update test  set test.total_score = (select sum(score) from answer where test_id=#{testId}  group by  test_id) , test_time=#{useTime}  where id=#{testId}
+</update>
+
+
+
+    <select id="getUserAnswer" resultMap="examUserAnswerList">
+select  eua.id as user_answer_id ,
+ti.title as title,eua.question_write as user_answer ,
+ti.score as total_score,eua.score as userScore
+from answer as eua
+LEFT JOIN questionwrite  as ti on ti.id=eua.tquestion_id
+where eua.test_id=#{testId} and eua.test_type=1
+    </select>
+</mapper>

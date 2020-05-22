@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exercise.budgetreal.mapper.TquestionItemSelectMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.exercise.budgetreal.entity.TquestionItemSelect">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="tquestion_id" property="tquestionId" />
+        <result column="choose_a" property="chooseA" />
+        <result column="choose_b" property="chooseB" />
+        <result column="choose_c" property="chooseC" />
+        <result column="choose_d" property="chooseD" />
+        <result column="right_choose" property="rightChoose" />
+        <result column="score" property="score" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, title, tquestion_id, choose_a, choose_b, choose_c, choose_d, right_choose, score, create_time, update_time
+    </sql>
+
+    <insert id="addUser" parameterType="java.util.List">
+        insert into questionchoose(title,tquestion_id,choose_a,choose_b,choose_c,choose_d,right_choose,score) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.title},#{item.tquestionId},#{item.chooseA},#{item.chooseB},#{item.chooseC},#{item.chooseD},#{item.rightChoose},#{item.score})
+        </foreach>
+    </insert>
+
+
+</mapper>

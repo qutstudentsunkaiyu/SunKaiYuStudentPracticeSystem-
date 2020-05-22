@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exercise.budgetreal.mapper.ExamMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.exercise.budgetreal.entity.Exam">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="course_id" property="courseId" />
+        <result column="tquestion_id" property="tquestionId" />
+        <result column="test_time" property="testTime" />
+        <result column="total_time" property="totalTime" />
+        <result column="test_type" property="testType" />
+        <result column="chooseNu" property="chooseNu" />
+        <result column="writeNu" property="writeNu" />
+        <result column="flag" property="flag" />
+        <result column="total_score" property="totalScore" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <resultMap id="examList" type="com.exercise.budgetreal.model.vo.ExamHistory">
+        <result column="exam_id" property="examId" />
+        <result column="subject_name" property="subjectName" />
+        <result column="tquestion_name" property="tquestionName" />
+        <result column="tquestion_id" property="tquestionId" />
+        <result column="total_time" property="totalTime" />
+        <result column="test_time" property="testTime" />
+        <result column="total_score" property="totalScore" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id, course_id, tquestion_id, test_time, total_time, test_type, chooseNu, writeNu, total_score, flag,create_time, update_time
+    </sql>
+
+    <select id="getExamList"  resultMap="examList">
+        select test.id as exam_id, course.course as subject_name,ifnull( tquestion.name,'随机题') as tquestion_name, ifnull(tquestion.id,0) as tquestion_id,
+test.total_time as total_time,test.test_time as test_time,test.total_score as total_score , test.create_time as create_time
+from test
+left join course on test.course_id=subject.id
+left join tquestion on tquestion.id=test.tquestion_id
+ where test.user_id=#{user}
+ order by test.create_time desc
+    </select>
+</mapper>

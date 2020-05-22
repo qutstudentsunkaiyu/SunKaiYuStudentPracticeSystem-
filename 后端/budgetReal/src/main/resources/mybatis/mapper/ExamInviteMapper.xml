@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exercise.budgetreal.mapper.ExamInviteMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.exercise.budgetreal.entity.ExamInvite">
+        <id column="id" property="id" />
+        <result column="teacher_id" property="teacherId" />
+        <result column="student_id" property="studentId" />
+        <result column="teacher_name" property="teacherName" />
+        <result column="student_name" property="studentName" />
+        <result column="tqustion_id" property="tqustionId" />
+        <result column="tquestion_name" property="tquestionName" />
+
+        <result column="test_id" property="testId" />
+        <result column="finish_test" property="finishTest" />
+        <result column="finish_read" property="finishRead" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+
+    <resultMap id="examInviteList" type="com.exercise.budgetreal.model.vo.ExamInviteVo">
+        <result column="tqustion_id" property="tqustionId" />
+        <result column="student_id" property="studentId" />
+        <result column="student_name" property="studentName" />
+        <result column="teacher_id" property="teacherId" />
+        <result column="teacher_name" property="teacherName" />
+        <result column="tquestion_name" property="tquestionName" />
+        <result column="subjet_name" property="subjectName" />
+        <result column="total_time" property="totalTime" />
+        <result column="finish_test" property="finishTest" />
+        <result column="finish_read" property="finishRead" />
+        <result column="ids" property="ids" />
+        <result column="subjet_id" property="subjectId" />
+        <result column="test_id" property="testId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, teacher_id, teacher_name,student_id, student_name, tqustion_id, tquestion_name, finish_test, finish_read, create_time
+    </sql>
+
+    <select id="getList"  resultMap="examInviteList" >
+select  ei.tqustion_id as tqustion_id,
+ei.student_id as student_id,ei.student_name as student_name,
+ei.teacher_id as teacher_id,ei.teacher_name as teacher_name,
+ei.create_time as create_time,
+tq.`name` as tquestion_name, sub.`course` as subjet_name,sub.`id` as subjet_id,
+tq.total_time as total_time,
+ei.finish_test as finish_test,ei.finish_read as finish_read,ei.id as ids,
+ei.test_id as test_id
+from test_invite as ei
+left join tquestion as tq on ei.tqustion_id=tq.id
+LEFT JOIN `course` as sub on sub.id=tq.course_id
+<where>
+    <if test="types == 1">
+        ei.student_id=#{user}
+    </if>
+    <if test="types == 2">
+        ei.teacher_id=#{user}
+    </if>
+</where>
+order  by ei.create_time desc
+    </select>
+</mapper>
